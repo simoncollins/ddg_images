@@ -85,7 +85,18 @@ pub async fn get_token(search_term: &str) -> Result<String, Box<dyn Error>> {
     Ok((String::from(token)))
 }
 
-pub async fn download_image(url: &str) -> Result<(), Box<dyn Error>> {
+pub async fn download_images(urls: Vec<String>) -> Result<(), Box<dyn Error + 'static>> {
+    let tasks: Vec<_> = urls.iter()
+        .map(|url| tokio::spawn(download_image(url.clone())))
+        .collect();
+
+    for task in tasks {
+        task.await?;
+    }
+    Ok(())
+}
+
+pub async fn download_image(url: String) -> Result<(), Box<dyn Error + Send + Sync>> {
     let response = reqwest::get(url).await?;
 
     let mut dest = {

@@ -6,9 +6,9 @@ This is a small utility written in Rust to find and download
 images matching given keywords using the Duck Duck Go search
 engine.
 
-Things are mostly working but currently only uses the first
-search term you specify and only writes out the first
-result and to the working directory.
+Things are mostly working but it currently only uses the first
+search term you specify and it downloads the images to the working directory.
+No validation is done missing or invalid images.
 
 __PRIOR ART__
 
@@ -25,7 +25,6 @@ so that should give you an idea as to the quality to expect!
 __TODO:__
 
 * Use all search terms
-* Download more than the first image!
 * Use base directory option if provided
 * Download images to sub-directories named after each keyword
 * Filter on image type if option provided

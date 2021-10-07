@@ -1,6 +1,6 @@
 use argh::FromArgs;
 use std::error::Error;
-use rs_ddg_images::{download_image, get_token, find_images, Response, SearchResult};
+use rs_ddg_images::{download_image, download_images, get_token, find_images, Response, SearchResult};
 
 fn default_num_images() -> u32 {
     200
@@ -31,8 +31,8 @@ struct ImageSearch {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+
     let settings: ImageSearch = argh::from_env();
-    println!("Settings are: {:?}", settings);
 
     let search_term = &settings.keyword[0];
     let token = get_token(search_term).await;
@@ -42,7 +42,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             println!("Found token: {}", token);
             match find_images(search_term, &token).await {
                 Ok(images) => {
-                    download_image(&images[0]).await;
+                    download_images(images).await;
                 },
                 Err(err) => println!("Error fetching image URLs: {:?}", err)
             };
