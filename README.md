@@ -6,9 +6,10 @@ This is a small utility written in Rust to find and download
 images matching given keywords using the Duck Duck Go search
 engine.
 
-Things are mostly working but it currently only uses the first
-search term you specify and it downloads the images to the working directory.
-No validation is done missing or invalid images.
+It is generally fit for purpose except that:
+* No validation is done on missing or invalid images.
+* Only the first 100 search results are used currently
+* There are outstanding TODO items (see below)
 
 __PRIOR ART__
 
@@ -19,14 +20,11 @@ Thanks to both authors for their efforts.
 
 __NOTE:__
 
-I'm currently writing this as an exercise in learning Rust
+I'm writing this as an exercise in learning Rust
 so that should give you an idea as to the quality to expect!
 
 __TODO:__
 
-* Use all search terms
-* Use base directory option if provided
-* Download images to sub-directories named after each keyword
 * Filter on image type if option provided
 * Download specified number of images if provided
 * Remove invalid images

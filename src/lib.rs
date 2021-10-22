@@ -8,6 +8,7 @@ use reqwest::header::{HeaderMap, DNT, ACCEPT_ENCODING, ACCEPT_LANGUAGE, USER_AGE
 use serde::Deserialize;
 
 use std::collections::HashMap;
+use std::path::PathBuf;
 
 const URL: &str = "https://duckduckgo.com/";
 
@@ -64,7 +65,6 @@ pub async fn find_images(search_term: &str, token: &str) -> Result<Vec<String>, 
 
     let images : Vec<String> = json.results.iter()
         .map(|result| result.image.clone()).collect();
-    println!("Image: {}", images[0]);
     Ok(images)
 }
 
@@ -85,9 +85,9 @@ pub async fn get_token(search_term: &str) -> Result<String, Box<dyn Error>> {
     Ok((String::from(token)))
 }
 
-pub async fn download_images(urls: Vec<String>) -> Result<(), Box<dyn Error + 'static>> {
+pub async fn download_images(urls: Vec<String>, path: PathBuf) -> Result<(), Box<dyn Error>> {
     let tasks: Vec<_> = urls.iter()
-        .map(|url| tokio::spawn(download_image(url.clone())))
+        .map(|url| tokio::spawn(download_image(url.clone(), path.clone())))
         .collect();
 
     for task in tasks {
@@ -96,7 +96,7 @@ pub async fn download_images(urls: Vec<String>) -> Result<(), Box<dyn Error + 's
     Ok(())
 }
 
-pub async fn download_image(url: String) -> Result<(), Box<dyn Error + Send + Sync>> {
+pub async fn download_image(url: String, path: PathBuf) -> Result<(), Box<dyn Error + Send + Sync>> {
     let response = reqwest::get(url).await?;
 
     let mut dest = {
@@ -107,16 +107,11 @@ pub async fn download_image(url: String) -> Result<(), Box<dyn Error + Send + Sy
             .and_then(|name| if name.is_empty() { None } else { Some(name) })
             .unwrap_or("tmp.bin");
 
-        let fname = env::current_dir().unwrap().join(fname);
-        println!("will be located under: '{:?}'", fname);
+        let fname = path.join(fname);
         File::create(fname)?
     };
-    println!("Dest {:?}", dest);
+
     let mut content = Cursor::new(response.bytes().await?);
-    // println!("Content length: {}", content.len());
-    match copy(&mut content, &mut dest) {
-        Err(e) => println!("Error {}", e),
-        Ok(bytes) => println!("Copied successfully {} bytes", bytes)
-    };
+    copy(&mut content, &mut dest)?;
     Ok(())
 }
