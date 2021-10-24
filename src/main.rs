@@ -1,11 +1,12 @@
-use argh::FromArgs;
-use std::error::Error;
 use std::env;
+use std::error::Error;
+use std::fs::{create_dir, create_dir_all};
 use std::path::PathBuf;
-use rs_ddg_images::{download_image, download_images, get_token, find_images, Response, SearchResult};
-use std::path::Path;
-use std::fs::{create_dir_all, create_dir};
+
+use argh::FromArgs;
 use convert_case::{Case, Casing};
+
+use rs_ddg_images::{download_images, find_images, get_token};
 
 fn default_num_images() -> u32 {
     200
@@ -64,7 +65,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
         let images = find_images(keyword, &token).await?;
         println!("Fetching images for {}", keyword);
-        download_images(images, keyword_folder).await;
+        download_images(images, keyword_folder).await?;
     }
     Ok(())
 }

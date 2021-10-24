@@ -1,14 +1,12 @@
 use std::error::Error;
-use std::io::copy;
 use std::fs::File;
-use std::env;
+use std::io::copy;
 use std::io::Cursor;
-use regex::Regex;
-use reqwest::header::{HeaderMap, DNT, ACCEPT_ENCODING, ACCEPT_LANGUAGE, USER_AGENT, ACCEPT, REFERER};
-use serde::Deserialize;
-
-use std::collections::HashMap;
 use std::path::PathBuf;
+
+use regex::Regex;
+use reqwest::header::{ACCEPT, ACCEPT_ENCODING, ACCEPT_LANGUAGE, DNT, HeaderMap, REFERER, USER_AGENT};
+use serde::Deserialize;
 
 const URL: &str = "https://duckduckgo.com/";
 
@@ -25,14 +23,8 @@ pub struct SearchResult {
 
 #[derive(Deserialize)]
 pub struct Response {
-    ads: Option<String>,
-    next: String,
-    query: String,
-    #[serde(rename = "queryEncoded")]
-    query_encoded: String,
-    response_type: String,
-    pub results: Vec<SearchResult>,
-    vqd: HashMap<String, String>
+    // next: String, TODO needed for paging later
+    pub results: Vec<SearchResult>
 }
 
 pub async fn find_images(search_term: &str, token: &str) -> Result<Vec<String>, Box<dyn Error>>{
@@ -82,7 +74,7 @@ pub async fn get_token(search_term: &str) -> Result<String, Box<dyn Error>> {
     let caps = re.captures(&text).unwrap();
     let token = caps.get(1).unwrap().as_str();
 
-    Ok((String::from(token)))
+    Ok(String::from(token))
 }
 
 pub async fn download_images(urls: Vec<String>, path: PathBuf) -> Result<(), Box<dyn Error>> {
@@ -91,7 +83,7 @@ pub async fn download_images(urls: Vec<String>, path: PathBuf) -> Result<(), Box
         .collect();
 
     for task in tasks {
-        task.await?;
+        let _ = task.await?;
     }
     Ok(())
 }
