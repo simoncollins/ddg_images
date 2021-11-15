@@ -1,5 +1,7 @@
 # Duck Duck Go Image Download
 
+[![Rust](https://github.com/simoncollins/ddg_images/actions/workflows/build.yml/badge.svg)](https://github.com/simoncollins/ddg_images/actions/workflows/build.yml)
+
 __Work In Progress!__
 
 This is a small utility written in Rust to find and download
