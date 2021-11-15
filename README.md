@@ -1,6 +1,6 @@
 # Duck Duck Go Image Download
 
-[![Rust](https://github.com/simoncollins/ddg_images/actions/workflows/build.yml/badge.svg)](https://github.com/simoncollins/ddg_images/actions/workflows/build.yml)
+[![build](https://github.com/simoncollins/ddg_images/actions/workflows/build.yml/badge.svg)](https://github.com/simoncollins/ddg_images/actions/workflows/build.yml)
 
 __Work In Progress!__
 
